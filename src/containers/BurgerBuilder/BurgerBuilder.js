@@ -30,6 +30,7 @@ class BurgerBuilder extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props);
     axios.get('https://the-burger-builder-8fb56.firebaseio.com/ingredients.json')
       .then(response => {
         this.setState({ingredients: response.data});
@@ -90,29 +91,38 @@ class BurgerBuilder extends Component {
   }
 
   purchaseContinueHandler = () => {
-    this.setState({loading: true});
-    // alert('You continued!');
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'Harry',
-        address: {
-          street: 'whatever',
-          zipCode: '95035',
-          country: "United States"
-        },
-        email: 'txl355@case.edu'
-      },
-      deliveryMethod: 'fastest'
+    // this.setState({loading: true});
+    // // alert('You continued!');
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: 'Harry',
+    //     address: {
+    //       street: 'whatever',
+    //       zipCode: '95035',
+    //       country: "United States"
+    //     },
+    //     email: 'txl355@case.edu'
+    //   },
+    //   deliveryMethod: 'fastest'
+    // }
+    // axios.post('/orders.json', order)
+    //   .then(response => {
+    //     this.setState({loading: false, purchasing: false});
+    //   })
+    //   .catch(error => {
+    //     this.setState({loading: false, purchasing: false});
+    //   });
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
     }
-    axios.post('/orders.json', order)
-      .then(response => {
-        this.setState({loading: false, purchasing: false});
-      })
-      .catch(error => {
-        this.setState({loading: false, purchasing: false});
-      });
+    const queryString = queryParams.join('&');
+    this.props.history.push({
+      pathname: '/checkout',
+      search: '?' + queryString
+    });
   }
 
   render() {
